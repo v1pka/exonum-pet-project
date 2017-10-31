@@ -1,0 +1,41 @@
+consensus_public_key = "d0aaef924760d9ba83e5d7021f0d15cfaee9f9a50436b866e19bb3041fca8d7c"
+consensus_secret_key = "1327bf8c5b59429775adcd844e3e64b6c3bbf8d6127ff2e7cd6daab60961feedd0aaef924760d9ba83e5d7021f0d15cfaee9f9a50436b866e19bb3041fca8d7c"
+external_address = "127.0.0.1:6333"
+listen_address = "0.0.0.0:6333"
+peers = ["127.0.0.1:6333"]
+service_public_key = "94c3102e9590e17fdcb776fa07dc5f0eb893dad37df96fc8b4cd5f402ee41b64"
+service_secret_key = "0cbe7884463386130bccdcde0f19f67abda6229e566ba38c872ea347554404da94c3102e9590e17fdcb776fa07dc5f0eb893dad37df96fc8b4cd5f402ee41b64"
+
+[api]
+enable_blockchain_explorer = true
+state_update_timeout = 10000
+[[genesis.validator_keys]]
+consensus_key = "d0aaef924760d9ba83e5d7021f0d15cfaee9f9a50436b866e19bb3041fca8d7c"
+service_key = "94c3102e9590e17fdcb776fa07dc5f0eb893dad37df96fc8b4cd5f402ee41b64"
+
+[genesis.consensus]
+peers_timeout = 10000
+round_timeout = 3000
+status_timeout = 5000
+txs_block_limit = 1000
+
+[genesis.consensus.timeout_adjuster]
+timeout = 500
+type = "Constant"
+
+[mempool]
+events_pool_capacity = 400000
+tx_pool_capacity = 100000
+
+[network]
+max_incoming_connections = 128
+max_outgoing_connections = 128
+tcp_nodelay = false
+tcp_reconnect_timeout = 500
+tcp_reconnect_timeout_max = 600000
+
+[services_configs]
+
+[whitelist]
+whitelist_enabled = false
+whitelisted_peers = []
