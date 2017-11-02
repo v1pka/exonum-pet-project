@@ -30,7 +30,7 @@ where
     fn put_contractor(&self, contractor: Contractor) -> Result<TxCreateContractor, ApiError> {
         {
             let id = contractor.id();
-            let hash = hash (id);
+            let hash = hash(id.as_bytes());
             let snapshot = self.blockchain.snapshot();
 
             if DigitalContractSchema::new(&snapshot)
@@ -47,52 +47,38 @@ where
         Ok(tx)
     }
 
-    fn get_contractor(&self, hash: &Hash) -> Result<Contractor, ApiError> {
+    fn get_contractor(&self, id: &str) -> Result<Contractor, ApiError> {
         let view = self.blockchain.snapshot();
+        let hash = hash(id.as_bytes());
         DigitalContractSchema::new(&view)
             .contents()
             .get(&hash)
-            .ok_or_else(|| ApiError::FileNotFound(*hash))
+            .ok_or_else(|| ApiError::FileNotFound(hash))
     }
 
-    fn get_contractors(&self) -> Result<Vec<(Hash, Contractor)>, ApiError> {
+    fn get_contractors(&self) -> Result<Vec<Contractor>, ApiError> {
         let view = self.blockchain.snapshot();
 
         let mut result = Vec::new();
         let exonum_schema = DigitalContractSchema::new(&view);
         let contents = exonum_schema.contents();
-        result = contents.iter().collect();
-        info!("================== get_contents ============== {:?}", result);
+
+        result = contents.values().collect();
+        info!(
+            "contractors {:?}",
+            result
+        );
         Ok(result.clone())
     }
 }
 
-fn parse_hex(map: &Params, id: &str) -> Result<Hash, ApiError> {
-    match map.find(id) {
-        Some(hex_str) => {
-            let hash = Hash::from_hex(hex_str).map_err(|e| {
-                let msg = format!(
-                    "An error during parsing of the `{}` id occurred: {}",
-                    hex_str,
-                    e
-                );
-                ApiError::IncorrectRequest(msg.into())
-            })?;
-            Ok(hash)
-        }
-        None => {
-            let msg = format!("The `{}` hash is not specified.", id);
-            Err(ApiError::IncorrectRequest(msg.into()))
-        }
-    }
-}
 
 impl<T> Api for PublicApi<T>
 where
     T: TransactionSend + Clone + 'static,
 {
     fn wire(&self, router: &mut Router) {
-        // Receive a message by POST and play it back.
+       
         let api = self.clone();
         let put_contractor = move |req: &mut Request| -> IronResult<Response> {
             match req.get::<bodyparser::Struct<Contractor>>() {
@@ -109,8 +95,18 @@ where
         let get_contractor = move |req: &mut Request| -> IronResult<Response> {
             let map = req.extensions.get::<Router>().unwrap();
 
-            let hash = parse_hex(&map, "hash")?;
-            let content = api.get_contractor(&hash)?;
+            let id;
+            match map.find("id") {
+                Some(value) => {
+                    id = value;
+                },
+                None => {
+                    let msg = format!("The id is not specified.");
+                    return Err(ApiError::IncorrectRequest(msg.into()))?;             
+                }
+            }
+        
+            let content = api.get_contractor(&id)?;
 
             api.ok_response(&json!(content))
         };
@@ -123,8 +119,8 @@ where
         };
 
         // Contents
-        router.put("/contractors",put_contractor, "put_contractor");
-        router.get("/contractors/:hash", get_contractor, "get_contractor");
+        router.put("/contractors", put_contractor, "put_contractor");
+        router.get("/contractors/:id", get_contractor, "get_contractor");
         router.get("/contractors", get_contractors, "get_contractors");
     }
 }
