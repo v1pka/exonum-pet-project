@@ -22,16 +22,20 @@ http://127.0.0.1:8000/api/services/dc_service/contractors
 http://127.0.0.1:8000/api/services/dc_service/contractors/11as1d12-a6ea-47dc-b641-0e20ae7c86ab
 ## Enabling debug log
 Set this variables before running an executable:
+```
 export RUST_LOG=debug
 export RUST_BACKTRACE=1
+```
 ## Full command to run application from **target/debug** dir (make sure that you've created db dir)
 ./dcontract run -d db -c ../../final_config.toml --public-api-address 127.0.0.1:8000
 # How to live with Rust
 * Required environment (specially for Visual Studio code):
-rustup default nightly
-rustup update nightly
+```
+rustup default nightly 
+rustup update nightly 
 rustup component add rls
 rustup component add rust-analysis
 rustup component add rust-sr
+```
 * To test Exonum see this article:
 https://exonum.com/doc/advanced/service-testing/
