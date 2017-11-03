@@ -16,21 +16,16 @@ run -d db -c final_config.toml --public-api-address 127.0.0.1:8000
 
 * Put contractor:
 curl -H "Content-Type: applicationjson" -X PUT -d @contractor.json http://127.0.0.1:8000/api/services/dc_service/contractors -v --noproxy '*'
-
 * Get contractor
 http://127.0.0.1:8000/api/services/dc_service/contractors
-
 * Get contractor by hash
 http://127.0.0.1:8000/api/services/dc_service/contractors/11as1d12-a6ea-47dc-b641-0e20ae7c86ab
-
 ## Enabling debug log
 Set this variables before running an executable:
 export RUST_LOG=debug
 export RUST_BACKTRACE=1
-
-## Full command to run application from target/debug dir (make sure that you've created db dir)
+## Full command to run application from **target/debug** dir (make sure that you've created db dir)
 ./dcontract run -d db -c ../../final_config.toml --public-api-address 127.0.0.1:8000
-
 # How to live with Rust
 * Required environment (specially for Visual Studio code):
 rustup default nightly
