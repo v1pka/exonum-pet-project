@@ -31,7 +31,7 @@ export RUST_BACKTRACE=1
 ## Full command to run application from target/debug dir (make sure that you've created db dir)
 ./dcontract run -d db -c ../../final_config.toml --public-api-address 127.0.0.1:8000
 
-# How to live with RUST
+# How to live with Rust
 * Required environment (specially for Visual Studio code):
 rustup default nightly
 rustup update nightly
